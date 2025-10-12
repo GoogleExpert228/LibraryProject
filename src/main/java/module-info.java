@@ -13,4 +13,6 @@ module org.example.library {
 
     opens org.example.library to javafx.fxml;
     exports org.example.library;
+    exports org.example.library.controllers;
+    opens org.example.library.controllers to javafx.fxml;
 }
