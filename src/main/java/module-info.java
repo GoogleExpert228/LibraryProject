@@ -10,6 +10,9 @@ module org.example.library {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires org.hibernate.orm.core;
+    requires static lombok;
+    requires jakarta.persistence;
 
     opens org.example.library to javafx.fxml;
     exports org.example.library;
