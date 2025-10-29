@@ -10,11 +10,11 @@ import org.example.library.enums.UserStatus;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +28,4 @@ public abstract class User {
     private LocalDateTime registrationDate;
     @Enumerated(EnumType.STRING)
     private UserStatus status;
-
-
 }

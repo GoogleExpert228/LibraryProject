@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import org.example.library.enums.LoyaltyLevel;
 
 @Data
-@Table(name = "user_ratings")
 @Entity
+@Table(name = "user_ratings")
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserRating {

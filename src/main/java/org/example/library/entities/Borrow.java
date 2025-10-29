@@ -10,10 +10,10 @@ import org.example.library.enums.BorrowType;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "borrows")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Borrow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

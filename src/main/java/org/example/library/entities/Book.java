@@ -9,8 +9,8 @@ import org.example.library.enums.BookCondition;
 import java.time.LocalDate;
 
 @Data
-@Table(name = "books")
 @Entity
+@Table(name = "books")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {

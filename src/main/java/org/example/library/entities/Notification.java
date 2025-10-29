@@ -9,8 +9,8 @@ import org.example.library.enums.NotificationType;
 import java.time.LocalDate;
 
 @Data
-@Table(name = "notifications")
 @Entity
+@Table(name = "notifications")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Notification {

@@ -9,8 +9,8 @@ import org.example.library.enums.FormStatus;
 import java.time.LocalDate;
 
 @Data
-@Table(name = "form_requests")
 @Entity
+@Table(name = "form_requests")
 @AllArgsConstructor
 @NoArgsConstructor
 public class FormRequest {

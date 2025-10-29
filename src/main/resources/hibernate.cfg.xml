@@ -1,13 +1,10 @@
-<!DOCTYPE hibernate-configuration PUBLIC
-        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
         <!-- PostgreSQL JDBC Properties -->
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/lesson29</property>
-        <property name="hibernate.connection.username">postgres</property>
-        <property name="hibernate.connection.password">admin</property>
+        <property name="hibernate.connection.url"/>
+        <property name="hibernate.connection.username"/>
+        <property name="hibernate.connection.password"/>
 
         <!-- Hibernate Properties -->
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
@@ -16,7 +13,11 @@
         <property name="hibernate.hbm2ddl.auto">create</property>
 
         <!-- Annotated Classes -->
-<!--        <mapping class="ua.hillel.lessons.lesson30.main.entity.User"/>-->
-<!--        <mapping class="ua.hillel.lessons.lesson30.main.entity.Order"/>-->
+        <mapping class="org.example.library.entities.Book"/>
+        <mapping class="org.example.library.entities.Borrow"/>
+        <mapping class="org.example.library.entities.FormRequest"/>
+        <mapping class="org.example.library.entities.Notification"/>
+        <mapping class="org.example.library.entities.User"/>
+        <mapping class="org.example.library.entities.UserRating"/>
     </session-factory>
 </hibernate-configuration>
