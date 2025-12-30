@@ -2,6 +2,7 @@ package org.example.library.daos.impl;
 
 import org.example.library.daos.FormRequestDao;
 import org.example.library.entities.FormRequest;
+import org.example.library.entities.User;
 import org.example.library.enums.FormStatus;
 import org.hibernate.Session;
 
@@ -29,6 +30,18 @@ public class FormRequestDaoImpl extends GenericHibernateDao<FormRequest, Long> i
                     .list();
         }
     }
+
+    @Override
+    public List<FormRequest> findBySubmittedBy(User user) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery(
+                            "from FormRequest fr where fr.submittedBy = :user", FormRequest.class)
+                    .setParameter("user", user)
+                    .list();
+        }
+    }
 }
+
+
 
 

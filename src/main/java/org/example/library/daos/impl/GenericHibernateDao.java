@@ -6,6 +6,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -80,9 +84,11 @@ public abstract class GenericHibernateDao<T, ID> implements GenericDao<T, ID> {
     @Override
     public List<T> findAll(Class<T> entityClass) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("from " + entityClass.getSimpleName(), entityClass).list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<T> cq = cb.createQuery(entityClass);
+            Root<? extends T> root = cq.from(entityClass); // <--- важно: ? extends T
+            cq.select(root);
+            return session.createQuery(cq).getResultList();
         }
     }
 }
-
-

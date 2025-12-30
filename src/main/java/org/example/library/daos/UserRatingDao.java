@@ -9,3 +9,7 @@ public interface UserRatingDao extends GenericDao<UserRating, Long> {
 }
 
 
+
+
+
+

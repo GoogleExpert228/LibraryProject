@@ -11,3 +11,7 @@ public interface NotificationDao extends GenericDao<Notification, Long> {
 }
 
 
+
+
+
+

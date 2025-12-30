@@ -23,4 +23,28 @@ public class Reader extends User {
 
     @OneToOne(mappedBy = "reader")
     private UserRating userRating;
+
+    public LocalDate getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(LocalDate approvalDate) {
+        this.approvalDate = approvalDate;
+    }
+
+    public List<Borrow> getBorrows() {
+        return borrows;
+    }
+
+    public void setBorrows(List<Borrow> borrows) {
+        this.borrows = borrows;
+    }
+
+    public UserRating getUserRating() {
+        return userRating;
+    }
+
+    public void setUserRating(UserRating userRating) {
+        this.userRating = userRating;
+    }
 }

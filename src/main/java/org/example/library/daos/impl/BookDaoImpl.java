@@ -43,5 +43,3 @@ public class BookDaoImpl extends GenericHibernateDao<Book, Long> implements Book
         }
     }
 }
-
-

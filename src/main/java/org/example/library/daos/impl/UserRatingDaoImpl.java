@@ -18,3 +18,7 @@ public class UserRatingDaoImpl extends GenericHibernateDao<UserRating, Long> imp
 }
 
 
+
+
+
+

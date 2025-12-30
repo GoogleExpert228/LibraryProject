@@ -20,4 +20,28 @@ public class UserRating {
     private User reader;
     @Enumerated(EnumType.STRING)
     private LoyaltyLevel rating;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getReader() {
+        return reader;
+    }
+
+    public void setReader(User reader) {
+        this.reader = reader;
+    }
+
+    public LoyaltyLevel getRating() {
+        return rating;
+    }
+
+    public void setRating(LoyaltyLevel rating) {
+        this.rating = rating;
+    }
 }

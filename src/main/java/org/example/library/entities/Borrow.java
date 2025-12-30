@@ -31,4 +31,68 @@ public class Borrow {
     private BorrowType borrowType;
     @Enumerated(EnumType.STRING)
     private BorrowStatus borrowStatus;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getReader() {
+        return reader;
+    }
+
+    public void setReader(User reader) {
+        this.reader = reader;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public LocalDate getBorrowDate() {
+        return borrowDate;
+    }
+
+    public void setBorrowDate(LocalDate borrowDate) {
+        this.borrowDate = borrowDate;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public BorrowType getBorrowType() {
+        return borrowType;
+    }
+
+    public void setBorrowType(BorrowType borrowType) {
+        this.borrowType = borrowType;
+    }
+
+    public BorrowStatus getBorrowStatus() {
+        return borrowStatus;
+    }
+
+    public void setBorrowStatus(BorrowStatus borrowStatus) {
+        this.borrowStatus = borrowStatus;
+    }
 }

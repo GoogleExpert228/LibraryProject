@@ -24,4 +24,44 @@ public class Notification {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User recipient;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDate getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDate timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
+    }
+
+    public User getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(User recipient) {
+        this.recipient = recipient;
+    }
 }
