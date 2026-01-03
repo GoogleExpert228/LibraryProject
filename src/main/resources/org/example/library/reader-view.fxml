@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.library.controllers.ReaderController">
+
+    <fx:define>
+        <Insets fx:id="DEFAULT_PADDING" top="15" right="15" bottom="15" left="15"/>
+    </fx:define>
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #27ae60; -fx-padding: 15;">
+            <Label text="МОЯТА БИБЛИОТЕКА" textFill="WHITE">
+                <font><Font name="System Bold" size="20.0" /></font>
+            </Label>
+
+            <VBox>
+                <Label fx:id="welcomeLabel" textFill="WHITE" style="-fx-font-weight: bold;"/>
+                <Label fx:id="ratingLabel" textFill="#ecf0f1" style="-fx-font-size: 12px;"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#onLogout" text="Изход" style="-fx-background-color: #c0392b; -fx-text-fill: white;" />
+        </HBox>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+
+            <Tab text="Каталог Книги">
+                <VBox padding="$DEFAULT_PADDING" spacing="10">
+                    <Label text="Налични книги в библиотеката" style="-fx-font-size: 16px;"/>
+                    <TableView fx:id="booksTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="bookTitleCol" text="Заглавие" prefWidth="250"/>
+                            <TableColumn fx:id="bookAuthorCol" text="Автор" prefWidth="150"/>
+                            <TableColumn fx:id="bookGenreCol" text="Жанр" prefWidth="120"/>
+                            <TableColumn fx:id="bookConditionCol" text="Състояние" prefWidth="100"/>
+                            <TableColumn fx:id="bookStatusCol" text="Статус" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <Tab text="Моите заеми">
+                <VBox padding="$DEFAULT_PADDING" spacing="10">
+                    <Label text="История на вашите заеми" style="-fx-font-size: 16px;"/>
+                    <TableView fx:id="myBorrowsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="borrowBookCol" text="Книга" prefWidth="250"/>
+                            <TableColumn fx:id="borrowDateCol" text="Взета на" prefWidth="120"/>
+                            <TableColumn fx:id="borrowDueCol" text="Краен срок" prefWidth="120"/>
+                            <TableColumn fx:id="borrowStatusCol" text="Статус" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <Tab text="Подай Заявка">
+                <SplitPane dividerPositions="0.4">
+                    <VBox spacing="15.0" padding="$DEFAULT_PADDING">
+                        <Label text="Нова заявка / Формуляр" style="-fx-font-weight: bold;"/>
+                        <Label text="Тук може да подадете заявка за преиздаване на читателска карта, корекция на данни или други въпроси." wrapText="true"/>
+
+                        <Label text="Съдържание:"/>
+                        <TextArea fx:id="requestContentArea" prefRowCount="8" wrapText="true"/>
+
+                        <Button text="Изпрати заявка" onAction="#onSubmitRequest" maxWidth="Infinity" style="-fx-base: #2980b9; -fx-text-fill: white;"/>
+                    </VBox>
+
+                    <VBox spacing="10.0" padding="$DEFAULT_PADDING">
+                        <Label text="Моите предишни заявки"/>
+                        <TableView fx:id="myRequestsTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="requestDateCol" text="Дата" prefWidth="100"/>
+                                <TableColumn fx:id="requestContentCol" text="Съдържание" prefWidth="250"/>
+                                <TableColumn fx:id="requestStatusCol" text="Статус" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </SplitPane>
+            </Tab>
+
+            <Tab text="Известия">
+                <VBox padding="$DEFAULT_PADDING" spacing="10">
+                    <Label text="Вашите съобщения" style="-fx-font-size: 16px;"/>
+                    <TableView fx:id="notificationsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="notifDateCol" text="Дата" prefWidth="120"/>
+                            <TableColumn fx:id="notifTypeCol" text="Тип" prefWidth="150"/>
+                            <TableColumn fx:id="notifMsgCol" text="Съобщение" prefWidth="400"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+    <bottom>
+        <Label text="Библиотечна система v1.0" style="-fx-padding: 5; -fx-text-fill: #95a5a6;">
+            <padding><Insets bottom="5" left="10" right="10" top="5"/></padding>
+        </Label>
+    </bottom>
+</BorderPane>
