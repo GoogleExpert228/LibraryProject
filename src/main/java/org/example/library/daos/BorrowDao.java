@@ -10,6 +10,7 @@ public interface BorrowDao extends GenericDao<Borrow, Long> {
     List<Borrow> findActiveByReader(Long readerId);
     List<Borrow> findOverdue(LocalDate today);
     List<Borrow> findByBookAndStatus(Long bookId, BorrowStatus status);
+    List<Borrow> findAllByReader(Long readerId);
 }
 
 

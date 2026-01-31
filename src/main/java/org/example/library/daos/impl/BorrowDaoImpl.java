@@ -42,6 +42,15 @@ public class BorrowDaoImpl extends GenericHibernateDao<Borrow, Long> implements 
                     .list();
         }
     }
+
+    @Override
+    public List<Borrow> findAllByReader(Long readerId) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery(
+                            "from Borrow br where br.reader.id = :rid", Borrow.class)
+                    .setParameter("rid", readerId)
+                    .list();
+        }    }
 }
 
 

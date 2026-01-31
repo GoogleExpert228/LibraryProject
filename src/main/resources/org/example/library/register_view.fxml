@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.library.controllers.LoginController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label text="Регистриране на Читателя">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+
+    <VBox spacing="5">
+        <Label text="Логин (Username):" />
+        <TextField fx:id="usernameField" promptText="Измислете логин" />
+        <Label fx:id="usernameErrorLabel" textFill="RED" style="-fx-font-size: 11px;" />
+    </VBox>
+
+    <VBox spacing="5">
+        <Label text="Пароль:" />
+        <PasswordField fx:id="passwordField" promptText="Въведете парола" />
+        <Label fx:id="passwordErrorLabel" textFill="RED" style="-fx-font-size: 11px;" />
+    </VBox>
+
+    <VBox spacing="5">
+        <Label text="ФИО (Full Name):" />
+        <TextField fx:id="fullNameField" promptText="Иванов Иван Иванович" />
+    </VBox>
+
+    <VBox spacing="5">
+        <Label text="Email:" />
+        <TextField fx:id="emailField" promptText="example@mail.com" />
+        <Label fx:id="emailErrorLabel" textFill="RED" style="-fx-font-size: 11px;" />
+    </VBox>
+
+    <Button text="Регистрирай се"
+            maxWidth="Infinity"
+            style="-fx-background-color: #4CAF50; -fx-text-fill: white;"
+            onAction="#handleRegister"/>
+
+    <Button text="Отмяна / Назад"
+            onAction="#handleCancelRegister"/>
+
+    <Label fx:id="statusLabel" textFill="RED"/>
+</VBox>

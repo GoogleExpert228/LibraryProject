@@ -1,10 +1,7 @@
 package org.example.library.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,10 +15,12 @@ import java.util.List;
 public class Reader extends User {
     private LocalDate approvalDate;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "reader")
     private List<Borrow> borrows;
 
-    @OneToOne(mappedBy = "reader")
+    @ToString.Exclude
+    @OneToOne(mappedBy = "reader", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserRating userRating;
 
     public LocalDate getApprovalDate() {
@@ -46,5 +45,15 @@ public class Reader extends User {
 
     public void setUserRating(UserRating userRating) {
         this.userRating = userRating;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("\"").append(getFullName()).append("\": ")
+                .append("(").append(getUsername()).append(")")
+                .toString();
+
+
     }
 }

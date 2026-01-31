@@ -99,4 +99,13 @@ public class Book {
     public void setAvailable(boolean available) {
         isAvailable = available;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("\"").append(title).append("\", ")
+                .append("\"").append(author).append("\", ")
+                .append("genre=\"").append(genre).append("\"")
+                .toString();
+    }
 }

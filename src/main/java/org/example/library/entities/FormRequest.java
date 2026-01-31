@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.example.library.enums.FormStatus;
 
 import java.time.LocalDate;
@@ -17,7 +18,10 @@ public class FormRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String content;
+    @ManyToOne
+    @ToString.Exclude
+    @JoinColumn(name = "book_id")
+    private Book book;
     private LocalDate submitDate;
     @Enumerated(EnumType.STRING)
     private FormStatus status;
@@ -27,7 +31,7 @@ public class FormRequest {
     private User submittedBy;
 
     @ManyToOne
-    @JoinColumn(name = "created_by_operator_id", nullable = true)
+    @JoinColumn(name = "created_by_reader_id", nullable = true)
     private User createdBy;
 
     public Long getId() {
@@ -36,14 +40,6 @@ public class FormRequest {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public LocalDate getSubmitDate() {
@@ -76,6 +72,17 @@ public class FormRequest {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+        .append("\"").append(book).append("\": ")
+        .append("submitDate=").append(submitDate)
+        .append(", status=").append(status)
+        .append(", submittedBy=").append(submittedBy)
+        .append(", createdBy=").append(createdBy)
+        .toString();
     }
 }
 

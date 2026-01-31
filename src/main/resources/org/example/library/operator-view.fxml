@@ -43,7 +43,6 @@
                             <Label text="Управление" style="-fx-font-weight: bold;"/>
                             <ComboBox fx:id="readerActionCombo" promptText="Избери читател" maxWidth="Infinity"/>
                             <HBox spacing="10">
-                                <Button text="Блокирай" onAction="#onBlockReader" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-text-fill: orange;"/>
                                 <Button text="Изтрий" onAction="#onRemoveReader" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-text-fill: red;"/>
                             </HBox>
                         </VBox>
@@ -55,6 +54,7 @@
                             <columns>
                                 <TableColumn fx:id="readerNameCol" text="Име" prefWidth="200"/>
                                 <TableColumn fx:id="readerUserCol" text="Потр. име" prefWidth="150"/>
+                                <TableColumn fx:id="readerEmailCol" text="Имейл" prefWidth="150"/>
                                 <TableColumn fx:id="readerStatusCol" text="Статус" prefWidth="150"/>
                             </columns>
                         </TableView>
@@ -99,19 +99,15 @@
                         <ComboBox fx:id="borrowTypeCombo" promptText="Тип" maxWidth="Infinity"/>
                         <DatePicker fx:id="borrowDueDatePicker" promptText="Краен срок" maxWidth="Infinity"/>
                         <Button text="Отдай" onAction="#onBorrowBook" maxWidth="Infinity" style="-fx-base: #3498db;"/>
-
-                        <Separator/>
-                        <Label text="Връщане" style="-fx-font-weight: bold;"/>
-                        <ComboBox fx:id="returnBorrowCombo" promptText="Активен заем" maxWidth="Infinity"/>
-                        <Button text="Маркирай като върната" onAction="#onReturnBook" maxWidth="Infinity"/>
+                        <Button text="Върни" onAction="#onProcessReturn" maxWidth="Infinity"/>
                     </VBox>
 
                     <TableView fx:id="borrowsTable">
                         <columns>
-                            <TableColumn fx:id="borrowReaderColumn" text="Читател" prefWidth="200"/>
-                            <TableColumn fx:id="borrowBookColumn" text="Книга" prefWidth="250"/>
-                            <TableColumn fx:id="borrowDueColumn" text="Срок" prefWidth="120"/>
-                            <TableColumn fx:id="borrowStatusColumn" text="Статус" prefWidth="120"/>
+                            <TableColumn fx:id="borrowReaderColumn" text="Читател" prefWidth="100"/>
+                            <TableColumn fx:id="borrowBookColumn" text="Книга" prefWidth="300"/>
+                            <TableColumn fx:id="borrowDueColumn" text="Дата" prefWidth="150"/>
+                            <TableColumn fx:id="borrowStatusColumn" text="Статус" prefWidth="150"/>
                         </columns>
                     </TableView>
                 </SplitPane>
@@ -121,6 +117,10 @@
                 <SplitPane dividerPositions="0.3">
                     <VBox spacing="15.0" padding="$DEFAULT_PADDING">
                         <Label text="Обработка на заявки" style="-fx-font-weight: bold;"/>
+                        <Button text="Одобри чрез диалог" onAction="#onApproveRequest"
+                                maxWidth="Infinity" style="-fx-base: #27ae60; -fx-text-fill: white;"/>
+                        <Separator/>
+                        <Label text="Ръчна промяна на статус" style="-fx-font-weight: bold;"/>
                         <ComboBox fx:id="formActionCombo" promptText="Избери заявка" maxWidth="Infinity"/>
                         <ComboBox fx:id="formStatusCombo" promptText="Нов статус" maxWidth="Infinity"/>
                         <Button text="Обнови статус" onAction="#onUpdateForm" maxWidth="Infinity"/>
@@ -128,37 +128,12 @@
                     <TableView fx:id="formsTable">
                         <columns>
                             <TableColumn fx:id="formDateColumn" text="Дата" prefWidth="120"/>
-                            <TableColumn fx:id="formContentColumn" text="Съдържание" prefWidth="300"/>
+                            <TableColumn fx:id="formBookColumn" text="Книга" prefWidth="300"/>
                             <TableColumn fx:id="formStatusColumn" text="Статус" prefWidth="150"/>
                         </columns>
                     </TableView>
                 </SplitPane>
             </Tab>
-
-            <Tab text="Известия">
-                <VBox spacing="15.0" padding="$DEFAULT_PADDING" alignment="TOP_CENTER">
-                    <Label text="Изпращане на известие до читател" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-                    <GridPane hgap="10" vgap="10" maxWidth="600">
-                        <Label text="Тип:" GridPane.rowIndex="0"/>
-                        <ComboBox fx:id="notifTypeCombo" maxWidth="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                        <Label text="Получател:" GridPane.rowIndex="1"/>
-                        <ComboBox fx:id="notifRecipientCombo" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                        <Label text="Съобщение:" GridPane.rowIndex="2" GridPane.valignment="TOP"/>
-                        <TextArea fx:id="notifMsgArea" prefRowCount="4" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                        <Button text="Изпрати известие" onAction="#onSendNotification" maxWidth="Infinity" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                    </GridPane>
-                </VBox>
-            </Tab>
-
         </TabPane>
     </center>
-
-    <bottom>
-        <Label fx:id="statusLabel" text="Готово" style="-fx-padding: 5;">
-            <padding><Insets bottom="5" left="10" right="10" top="5"/></padding>
-        </Label>
-    </bottom>
 </BorderPane>

@@ -2,22 +2,20 @@
     <session-factory>
         <!-- PostgreSQL JDBC Properties -->
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/librarydb</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/postgres?options=-c%20timezone=UTC</property>
         <property name="hibernate.connection.username">postgres</property>
-        <property name="hibernate.connection.password">postgres123</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.connection.password">998776</property>
 
         <!-- Hibernate Properties -->
+        <property name="hibernate.jdbc.time_zone">Europe/Kiev</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
-        <property name="hibernate.hbm2ddl.auto">create</property>
-
+        <property name="hibernate.hbm2ddl.auto">update</property>
         <!-- Annotated Classes -->
         <mapping class="org.example.library.entities.Book"/>
         <mapping class="org.example.library.entities.Borrow"/>
         <mapping class="org.example.library.entities.FormRequest"/>
-        <mapping class="org.example.library.entities.Notification"/>
         <mapping class="org.example.library.entities.User"/>
         <mapping class="org.example.library.entities.UserRating"/>
     </session-factory>

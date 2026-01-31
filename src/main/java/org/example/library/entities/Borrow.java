@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.example.library.enums.BorrowStatus;
 import org.example.library.enums.BorrowType;
 
@@ -19,8 +20,9 @@ public class Borrow {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "reader_id")
-    private User reader;
+    private Reader reader;
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
@@ -40,11 +42,11 @@ public class Borrow {
         this.id = id;
     }
 
-    public User getReader() {
+    public Reader getReader() {
         return reader;
     }
 
-    public void setReader(User reader) {
+    public void setReader(Reader reader) {
         this.reader = reader;
     }
 
@@ -94,5 +96,16 @@ public class Borrow {
 
     public void setBorrowStatus(BorrowStatus borrowStatus) {
         this.borrowStatus = borrowStatus;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+        .append("Reader: ").append(reader)
+        .append("\"").append(book)
+        .append(", borrowDate: ").append(borrowDate)
+        .append(", dueDate: ").append(dueDate)
+        .append(", returnDate: ").append(returnDate)
+        .toString();
     }
 }

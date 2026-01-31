@@ -26,5 +26,6 @@
         <Label fx:id="errorLabel" textFill="RED" wrapText="true" />
 
         <Button defaultButton="true" maxWidth="Infinity" onAction="#onLoginButtonClick" text="Вход" style="-fx-background-color: #2a9df4; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button text="Регистрирай се" onAction="#handleOpenRegisterView" style="-fx-background-color: #2a9df4; -fx-text-fill: white; -fx-font-weight: bold;"/>
     </VBox>
 </VBox>

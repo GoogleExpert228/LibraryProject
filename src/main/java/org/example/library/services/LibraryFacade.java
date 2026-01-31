@@ -16,15 +16,13 @@ public class LibraryFacade {
     private final BookDao bookDao = new BookDaoImpl();
     private final BorrowDao borrowDao = new BorrowDaoImpl();
     private final FormRequestDao formRequestDao = new FormRequestDaoImpl();
-    private final NotificationDao notificationDao = new NotificationDaoImpl();
-    private final UserRatingDao userRatingDao = new UserRatingDaoImpl();
 
     public void createInitialAdmin() {
         List<User> users = userDao.findAll(User.class);
         if (users.isEmpty()) {
             Admin admin = new Admin();
             admin.setUsername("admin");
-            admin.setPassword("admin");
+            admin.setPassword("administrator");
             admin.setFullName("Главен Администратор");
             admin.setEmail("admin@library.bg");
             admin.setRole(Role.ADMIN);
@@ -38,7 +36,8 @@ public class LibraryFacade {
 
     public User authenticate(String username, String password) {
         return userDao.findAll(User.class).stream()
-                .filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password))
+                .filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password)
+                        && u.getStatus() == UserStatus.ACTIVE)
                 .findFirst()
                 .orElse(null);
     }
@@ -56,34 +55,48 @@ public class LibraryFacade {
         return (Reader) userDao.save(reader);
     }
 
-    public void deactivateReader(Long readerId) {
-        userDao.findById(User.class, readerId)
-                .filter(user -> user.getRole() == Role.READER)
-                .ifPresent(user -> {
-                    user.setStatus(UserStatus.BLOCKED);
-                    userDao.update(user);
-                });
-    }
-
     public void removeReader(Long readerId) {
+        List<Borrow> readerBorrows = borrowDao.findAllByReader(readerId);
+
+        for (Borrow b : readerBorrows) {
+            borrowDao.delete(b);
+        }
+
+        User readerUser = userDao.findById(User.class, readerId).orElse(null);
+        if (readerUser != null) {
+            List<FormRequest> readerForms = formRequestDao.findBySubmittedBy(readerUser);
+            for (FormRequest fr : readerForms) {
+                formRequestDao.delete(fr);
+            }
+        }
+
         userDao.findById(User.class, readerId)
                 .filter(user -> user.getRole() == Role.READER)
                 .ifPresent(userDao::delete);
     }
 
-    public FormRequest submitReaderForm(String content, Long submittedByUserId, Long createdByOperatorId) {
+    public FormRequest submitReaderForm(Long submittedByUserId, Book book) {
         User submittedBy = requireUser(submittedByUserId);
         FormRequest formRequest = new FormRequest();
-        formRequest.setContent(content);
+        formRequest.setBook(book);
         formRequest.setSubmitDate(LocalDate.now());
         formRequest.setStatus(FormStatus.PENDING);
         formRequest.setSubmittedBy(submittedBy);
 
-        if (createdByOperatorId != null) {
-            formRequest.setCreatedBy(requireUser(createdByOperatorId));
+        return formRequestDao.save(formRequest);
+    }
+
+    public void approveRequestAndBorrow(Long requestId, BorrowType type, LocalDate dueDate) {
+        FormRequest request = requireForm(requestId);
+
+        if (request.getStatus() != FormStatus.PENDING) {
+            throw new IllegalStateException("Заявка вече е обработена.");
         }
 
-        return formRequestDao.save(formRequest);
+        borrowBook(request.getSubmittedBy().getId(), request.getBook().getId(), type, dueDate);
+
+        request.setStatus(FormStatus.ACTIVE);
+        formRequestDao.update(request);
     }
 
     public FormRequest updateFormStatus(Long formId, FormStatus newStatus) {
@@ -113,19 +126,12 @@ public class LibraryFacade {
         return bookDao.update(book);
     }
 
-    public Book scrapBook(Long bookId) {
-        Book book = requireBook(bookId);
-        book.setCondition(BookCondition.DAMAGED);
-        book.setAvailable(false);
-        return bookDao.update(book);
-    }
-
     public Borrow borrowBook(Long readerId, Long bookId, BorrowType borrowType, LocalDate dueDate) {
         if (dueDate == null || !dueDate.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Срокът за връщане трябва да е в бъдеще.");
         }
 
-        User reader = requireUser(readerId);
+        Reader reader = (Reader) requireUser(readerId);
         if (reader.getRole() != Role.READER) {
             throw new IllegalStateException("Само читатели могат да заемат книги.");
         }
@@ -151,45 +157,23 @@ public class LibraryFacade {
         return saved;
     }
 
-    public Borrow returnBook(Long borrowId) {
+    public Borrow returnBook(Long borrowId, BookCondition returnCondition) {
         Borrow borrow = requireBorrow(borrowId);
         borrow.setReturnDate(LocalDate.now());
         borrow.setBorrowStatus(BorrowStatus.RETURNED);
-        Borrow updated = borrowDao.update(borrow);
 
         Book book = borrow.getBook();
-        book.setAvailable(true);
+        book.setCondition(returnCondition);
+
+        if (returnCondition == BookCondition.DAMAGED) {
+            book.setAvailable(false);
+            book.setArchivedDate(LocalDate.now());
+        } else {
+            book.setAvailable(true);
+        }
+
         bookDao.update(book);
-
-        return updated;
-    }
-
-    public Notification createNotification(NotificationType type, String message, Long recipientId) {
-        Notification notification = new Notification();
-        notification.setType(type);
-        notification.setMessage(message);
-        notification.setTimeStamp(LocalDate.now());
-
-        if (recipientId != null) {
-            notification.setRecipient(requireUser(recipientId));
-        }
-
-        return notificationDao.save(notification);
-    }
-
-    public UserRating updateUserRating(Long readerId, LoyaltyLevel loyaltyLevel) {
-        User reader = requireUser(readerId);
-        Optional<UserRating> existing = userRatingDao.findByReaderId(readerId);
-        if (existing.isPresent()) {
-            UserRating rating = existing.get();
-            rating.setRating(loyaltyLevel);
-            return userRatingDao.update(rating);
-        }
-
-        UserRating rating = new UserRating();
-        rating.setReader(reader);
-        rating.setRating(loyaltyLevel);
-        return userRatingDao.save(rating);
+        return borrowDao.update(borrow);
     }
 
     public List<User> loadAllUsers() {
@@ -198,10 +182,6 @@ public class LibraryFacade {
 
     public List<User> loadReaders() {
         return userDao.findByRole(Role.READER);
-    }
-
-    public List<User> loadOperators() {
-        return userDao.findByRole(Role.OPERATOR);
     }
 
     public List<Book> loadAllBooks() {
@@ -218,18 +198,6 @@ public class LibraryFacade {
 
     public List<Borrow> loadAllBorrows() {
         return borrowDao.findAll(Borrow.class);
-    }
-
-    public List<Borrow> loadOverdueBorrows() {
-        return borrowDao.findOverdue(LocalDate.now());
-    }
-
-    public List<Notification> loadNotifications() {
-        return notificationDao.findAll(Notification.class);
-    }
-
-    public List<UserRating> loadRatings() {
-        return userRatingDao.findAll(UserRating.class);
     }
 
     private void populateBaseUser(User target, String username, String password, String fullName, String email,
@@ -261,6 +229,38 @@ public class LibraryFacade {
     private FormRequest requireForm(Long id) {
         return formRequestDao.findById(FormRequest.class, id)
                 .orElseThrow(() -> new IllegalArgumentException("Формуляр с ID " + id + " не е намерен."));
+    }
+
+    public void changeUserStatus(Long id, UserStatus userStatus) {
+        User user = requireUser(id);
+        user.setStatus(userStatus);
+        userDao.update(user);
+    }
+
+    public void requestReturn(Long borrowId) {
+        Borrow borrow = borrowDao.findById(Borrow.class, borrowId)
+                .orElseThrow(() -> new IllegalArgumentException("Заем не е намерен"));
+
+        borrow.setBorrowStatus(BorrowStatus.RETURN_PENDING);
+        borrowDao.update(borrow);
+    }
+
+    public Borrow finalizeReturn(Long borrowId, BookCondition returnCondition) {
+        Borrow borrow = requireBorrow(borrowId);
+        borrow.setReturnDate(LocalDate.now());
+        borrow.setBorrowStatus(BorrowStatus.RETURNED);
+
+        Book book = borrow.getBook();
+        book.setCondition(returnCondition);
+
+        if (returnCondition == BookCondition.DAMAGED || returnCondition == BookCondition.LOST) {
+            book.setAvailable(false);
+        } else {
+            book.setAvailable(true);
+        }
+
+        bookDao.update(book);
+        return borrowDao.update(borrow);
     }
 }
 

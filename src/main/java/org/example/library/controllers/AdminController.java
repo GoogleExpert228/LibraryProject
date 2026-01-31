@@ -3,14 +3,20 @@ package org.example.library.controllers;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.example.library.HelloApplication;
+import org.example.library.configs.UserSession;
 import org.example.library.entities.*;
 import org.example.library.enums.*;
 import org.example.library.services.LibraryFacade;
@@ -18,15 +24,14 @@ import org.example.library.services.LibraryFacade;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AdminController {
 
     private final LibraryFacade facade = new LibraryFacade();
     private User currentUser;
-
-    @FXML private Label statusLabel;
-    @FXML private Label welcomeLabel;
+    private FilteredList<User> filteredUsers;
 
     // --- ПОТРЕБИТЕЛИ (Админ часть) ---
     @FXML private TextField operatorUsernameField;
@@ -35,8 +40,10 @@ public class AdminController {
     @FXML private TextField operatorEmailField;
 
     @FXML private TableView<User> usersTable;
-    @FXML private TableColumn<User, String> userNameColumn;
+    @FXML private TableColumn<User, String> userFullNameColumn;
+    @FXML private TableColumn<User, String> userUsernameColumn;
     @FXML private TableColumn<User, Role> userRoleColumn;
+    @FXML private TableColumn<User, String> userEmailColumn;
     @FXML private TableColumn<User, UserStatus> userStatusColumn;
 
     // --- ЧИТАТЕЛИ (Операции) ---
@@ -44,7 +51,7 @@ public class AdminController {
     @FXML private PasswordField readerPasswordField;
     @FXML private TextField readerFullNameField;
     @FXML private TextField readerEmailField;
-    @FXML private ComboBox<User> readerActionCombo; // Для блокировки/удаления
+    @FXML private ComboBox<User> readerActionCombo;
 
     // --- КНИГИ ---
     @FXML private TextField bookInventoryField;
@@ -58,8 +65,8 @@ public class AdminController {
     @FXML private TableColumn<Book, BookCondition> bookConditionColumn;
     @FXML private TableColumn<Book, Boolean> bookAvailColumn;
 
-    @FXML private ComboBox<Book> bookActionCombo; // Для архивации/брака
-
+    @FXML private ComboBox<Book> bookActionCombo;
+    @FXML private CheckBox showArchivedCheckBox;
     // --- ЗАЕМАНЕ (Выдача) ---
     @FXML private ComboBox<User> borrowReaderCombo;
     @FXML private ComboBox<Book> borrowBookCombo;
@@ -77,17 +84,9 @@ public class AdminController {
     @FXML private TableView<FormRequest> formsTable;
     @FXML private TableColumn<FormRequest, LocalDate> formDateColumn;
     @FXML private TableColumn<FormRequest, FormStatus> formStatusColumn;
-    @FXML private TableColumn<FormRequest, String> formContentColumn;
+    @FXML private TableColumn<FormRequest, Book> formBookColumn;
     @FXML private ComboBox<FormRequest> formActionCombo;
     @FXML private ComboBox<FormStatus> formStatusCombo;
-
-    // --- ИЗВЕСТИЯ ---
-    @FXML private ComboBox<NotificationType> notifTypeCombo;
-    @FXML private TextArea notifMsgArea;
-    @FXML private ComboBox<User> notifRecipientCombo;
-    @FXML private TableView<Notification> notifTable;
-    @FXML private TableColumn<Notification, LocalDate> notifDateCol;
-    @FXML private TableColumn<Notification, String> notifMsgCol;
 
     @FXML
     public void initialize() {
@@ -96,14 +95,11 @@ public class AdminController {
         refreshAllData();
     }
 
-    public void initData(User user) {
-        this.currentUser = user;
-        welcomeLabel.setText("Администратор: " + user.getFullName());
-    }
-
     private void setupTables() {
         // Users
-        userNameColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFullName()));
+        userFullNameColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFullName()));
+        userUsernameColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUsername()));
+        userEmailColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
         userRoleColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getRole()));
         userStatusColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getStatus()));
 
@@ -122,23 +118,16 @@ public class AdminController {
         // Forms
         formDateColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getSubmitDate()));
         formStatusColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getStatus()));
-        formContentColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getContent()));
-
-        // Notifications
-        notifDateCol.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getTimeStamp()));
-        notifMsgCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMessage()));
+        formBookColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getBook()));
     }
 
     private void setupCombos() {
         bookConditionCombo.setItems(FXCollections.observableArrayList(BookCondition.values()));
         borrowTypeCombo.setItems(FXCollections.observableArrayList(BorrowType.values()));
-        notifTypeCombo.setItems(FXCollections.observableArrayList(NotificationType.values()));
         formStatusCombo.setItems(FXCollections.observableArrayList(FormStatus.values()));
 
-        // Helper для красивого отображения User/Book в комбобоксах
         setComboFactory(readerActionCombo);
         setComboFactory(borrowReaderCombo);
-        setComboFactory(notifRecipientCombo);
     }
 
     private <T> void setComboFactory(ComboBox<T> combo) {
@@ -159,14 +148,23 @@ public class AdminController {
     }
 
     private void refreshAllData() {
-        // Users
+        this.currentUser = UserSession.getInstance().getUser();
+
         List<User> users = facade.loadAllUsers();
+        ObservableList<User> masterData = FXCollections.observableArrayList(users);
+
+        filteredUsers = new FilteredList<>(masterData, user -> true);
+
+        updateFilter();
+
+        SortedList<User> sortedData = new SortedList<>(filteredUsers);
+        sortedData.comparatorProperty().bind(usersTable.comparatorProperty());
+
+        usersTable.setItems(sortedData);
         usersTable.setItems(FXCollections.observableArrayList(users));
 
         List<User> readers = facade.loadReaders();
-        readerActionCombo.setItems(FXCollections.observableArrayList(readers));
         borrowReaderCombo.setItems(FXCollections.observableArrayList(readers));
-        notifRecipientCombo.setItems(FXCollections.observableArrayList(users));
 
         // Books
         List<Book> books = facade.loadAllBooks();
@@ -181,10 +179,18 @@ public class AdminController {
                 borrows.stream().filter(b -> b.getBorrowStatus() == BorrowStatus.ACTIVE).collect(Collectors.toList())
         ));
 
-        // Forms & Notifs
         formsTable.setItems(FXCollections.observableArrayList(facade.loadAllForms()));
         formActionCombo.setItems(FXCollections.observableArrayList(facade.loadAllForms()));
-        notifTable.setItems(FXCollections.observableArrayList(facade.loadNotifications()));
+    }
+
+    private void updateFilter() {
+        filteredUsers.setPredicate(user -> {
+            if (showArchivedCheckBox != null && showArchivedCheckBox.isSelected()) {
+                return true;
+            }
+
+            return user.getStatus() != UserStatus.ARCHIVED;
+        });
     }
 
     // --- ACTIONS ---
@@ -210,11 +216,11 @@ public class AdminController {
     }
 
     @FXML
-    private void onBlockReader() {
-        if(readerActionCombo.getValue() != null) {
-            facade.deactivateReader(readerActionCombo.getValue().getId());
+    private void onRemoveUser() {
+        if (readerActionCombo.getValue() != null) {
+            facade.removeReader(readerActionCombo.getValue().getId());
             refreshAllData();
-            showStatus("Читателят е блокиран.");
+            showStatus("Читателят е изтрит от системата.");
         }
     }
 
@@ -238,6 +244,66 @@ public class AdminController {
     }
 
     @FXML
+    private void onApproveRequest() {
+        // Получаем выбранную заявку из таблицы заявок оператора
+        FormRequest selected = formsTable.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            showAlert("Моля, изберете заявка за одобрение.");
+            return;
+        }
+
+        if (selected.getStatus() != FormStatus.PENDING) {
+            showStatus("Могат да се одобряват само заявки със статус PENDING.");
+            return;
+        }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Одобряване на заявка");
+        dialog.setHeaderText("Параметри за: " + selected.getBook().getTitle());
+
+        ButtonType approveButtonType = new ButtonType("Одобри", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(approveButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        ComboBox<BorrowType> typeCombo = new ComboBox<>(FXCollections.observableArrayList(BorrowType.values()));
+        typeCombo.setValue(BorrowType.TAKING_HOME); // По умолчанию "На дом"
+
+        DatePicker datePicker = new DatePicker(LocalDate.now().plusDays(14));
+
+        // ЛОГИКА АВТОМАТИЧЕСКОЙ СМЕНЫ ДАТЫ
+        typeCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == BorrowType.READING_ROOM) {
+                datePicker.setValue(LocalDate.now()); // Возврат сегодня
+            } else {
+                datePicker.setValue(LocalDate.now().plusDays(14)); // Стандартные 14 дней
+            }
+        });
+
+        grid.add(new Label("Тип:"), 0, 0);
+        grid.add(typeCombo, 1, 0);
+        grid.add(new Label("Срок:"), 0, 1);
+        grid.add(datePicker, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.showAndWait().ifPresent(response -> {
+            if (response == approveButtonType) {
+                try {
+                    facade.approveRequestAndBorrow(selected.getId(), typeCombo.getValue(), datePicker.getValue());
+                    refreshAllData();
+                    showStatus("Заявката е одобрена успешно.");
+                } catch (Exception e) {
+                    showError(e);
+                }
+            }
+        });
+    }
+
+    @FXML
     private void onBorrowBook() {
         try {
             facade.borrowBook(borrowReaderCombo.getValue().getId(), borrowBookCombo.getValue().getId(),
@@ -249,11 +315,34 @@ public class AdminController {
 
     @FXML
     private void onReturnBook() {
-        if (returnBorrowCombo.getValue() != null) {
-            facade.returnBook(returnBorrowCombo.getValue().getId());
-            refreshAllData();
-            showStatus("Книгата е върната.");
+        // Предположим, вы выбираете запись о выдаче из комбобокса или таблицы
+        Borrow selectedBorrow = borrowsTable.getSelectionModel().getSelectedItem();
+
+        if (selectedBorrow == null) {
+            showAlert("Моля, изберете заем за връщане.");
+            return;
         }
+
+        if (selectedBorrow.getBorrowStatus() != BorrowStatus.ACTIVE) {
+            showStatus("Тази книга вече е върната.");
+            return;
+        }
+
+        ChoiceDialog<BookCondition> dialog = new ChoiceDialog<>(BookCondition.GOOD, BookCondition.values());
+        dialog.setTitle("Връщане на книга");
+        dialog.setHeaderText("Изберете състояние на книгата: " + selectedBorrow.getBook().getTitle());
+        dialog.setContentText("Състояние:");
+
+        Optional<BookCondition> result = dialog.showAndWait();
+        result.ifPresent(condition -> {
+            try {
+                facade.returnBook(selectedBorrow.getId(), condition);
+                refreshAllData();
+                showStatus("Книгата е върната успешно със статус: " + condition);
+            } catch (Exception e) {
+                showError(e);
+            }
+        });
     }
 
     @FXML
@@ -266,17 +355,9 @@ public class AdminController {
     }
 
     @FXML
-    private void onSendNotification() {
-        try {
-            Long recipientId = notifRecipientCombo.getValue() != null ? notifRecipientCombo.getValue().getId() : null;
-            facade.createNotification(notifTypeCombo.getValue(), notifMsgArea.getText(), recipientId);
-            refreshAllData();
-            showStatus("Известието е изпратено.");
-        } catch (Exception e) { showError(e); }
-    }
-
-    @FXML
     public void onLogout(ActionEvent event) throws IOException {
+        UserSession.cleanUserSession();
+
         FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
         Scene scene = new Scene(loader.load(), 400, 350);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -285,9 +366,16 @@ public class AdminController {
         stage.centerOnScreen();
     }
 
-    private void showStatus(String msg) { statusLabel.setText(msg); }
+    private void showStatus(String msg) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg);
+        alert.show();
+    }
     private void showError(Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage());
+        alert.show();
+    }
+    private void showAlert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.WARNING, msg);
         alert.show();
     }
 }

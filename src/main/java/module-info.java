@@ -14,6 +14,7 @@ module org.example.library {
     requires static lombok;
     requires jakarta.persistence;
     requires java.naming;
+    requires jakarta.validation;
 
     opens org.example.library to javafx.fxml;
     exports org.example.library;

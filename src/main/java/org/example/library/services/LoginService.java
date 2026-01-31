@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.library.configs.UserSession;
 import org.example.library.entities.User;
 
 import java.io.IOException;
@@ -25,9 +26,11 @@ public class LoginService {
             return "Грешно потребителско име или парола!";
         }
 
+        UserSession.getInstance(user);
+
         try {
             openUIByRole(user, stage);
-            return null; // успех
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
             return "Грешка при зареждане на интерфейса.";

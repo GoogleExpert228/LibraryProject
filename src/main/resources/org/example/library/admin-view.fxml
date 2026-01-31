@@ -50,9 +50,11 @@
                             <Button text="Регистрирай Читател" onAction="#onRegisterReader" maxWidth="Infinity"/>
 
                             <Separator/>
-                            <Label text="Управление на Читатели" style="-fx-font-weight: bold;"/>
+                            <Label text="Управление" style="-fx-font-weight: bold;"/>
                             <ComboBox fx:id="readerActionCombo" promptText="Избери читател" maxWidth="Infinity"/>
-                            <Button text="Блокирай Читател" onAction="#onBlockReader" maxWidth="Infinity" style="-fx-text-fill: red;"/>
+                            <HBox spacing="10">
+                                <Button text="Изтрий" onAction="#onRemoveUser" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-text-fill: red;"/>
+                            </HBox>
                         </VBox>
                     </ScrollPane>
 
@@ -60,7 +62,9 @@
                         <Label text="Списък с всички потребители"/>
                         <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="userNameColumn" text="Име" prefWidth="200"/>
+                                <TableColumn fx:id="userFullNameColumn" text="Име" prefWidth="200"/>
+                                <TableColumn fx:id="userUsernameColumn" text="Потребителско име" prefWidth="150"/>
+                                <TableColumn fx:id="userEmailColumn" text="Имейл" prefWidth="150"/>
                                 <TableColumn fx:id="userRoleColumn" text="Роля" prefWidth="150"/>
                                 <TableColumn fx:id="userStatusColumn" text="Статус" prefWidth="150"/>
                             </columns>
@@ -127,7 +131,11 @@
             <Tab text="Формуляри">
                 <SplitPane dividerPositions="0.3">
                     <VBox spacing="15.0" padding="$DEFAULT_PADDING">
-                        <Label text="Обработка" style="-fx-font-weight: bold;"/>
+                        <Label text="Обработка на заявки" style="-fx-font-weight: bold;"/>
+                        <Button text="Одобри чрез диалог" onAction="#onApproveRequest"
+                                maxWidth="Infinity" style="-fx-base: #27ae60; -fx-text-fill: white;"/>
+                        <Separator/>
+                        <Label text="Ръчна промяна на статус" style="-fx-font-weight: bold;"/>
                         <ComboBox fx:id="formActionCombo" promptText="Избери заявка" maxWidth="Infinity"/>
                         <ComboBox fx:id="formStatusCombo" promptText="Нов статус" maxWidth="Infinity"/>
                         <Button text="Обнови статус" onAction="#onUpdateForm" maxWidth="Infinity"/>
@@ -135,37 +143,12 @@
                     <TableView fx:id="formsTable">
                         <columns>
                             <TableColumn fx:id="formDateColumn" text="Дата" prefWidth="120"/>
-                            <TableColumn fx:id="formContentColumn" text="Съдържание" prefWidth="300"/>
+                            <TableColumn fx:id="formBookColumn" text="Книга" prefWidth="300"/>
                             <TableColumn fx:id="formStatusColumn" text="Статус" prefWidth="150"/>
                         </columns>
                     </TableView>
                 </SplitPane>
             </Tab>
-
-            <Tab text="Известия">
-                <SplitPane dividerPositions="0.3">
-                    <VBox spacing="15.0" padding="$DEFAULT_PADDING">
-                        <Label text="Изпращане" style="-fx-font-weight: bold;"/>
-                        <ComboBox fx:id="notifTypeCombo" promptText="Тип" maxWidth="Infinity"/>
-                        <ComboBox fx:id="notifRecipientCombo" promptText="Получател (опция)" maxWidth="Infinity"/>
-                        <TextArea fx:id="notifMsgArea" promptText="Съобщение..." prefRowCount="4"/>
-                        <Button text="Изпрати" onAction="#onSendNotification" maxWidth="Infinity"/>
-                    </VBox>
-                    <TableView fx:id="notifTable">
-                        <columns>
-                            <TableColumn fx:id="notifDateCol" text="Дата" prefWidth="120"/>
-                            <TableColumn fx:id="notifMsgCol" text="Съобщение" prefWidth="400"/>
-                        </columns>
-                    </TableView>
-                </SplitPane>
-            </Tab>
-
         </TabPane>
     </center>
-
-    <bottom>
-        <Label fx:id="statusLabel" text="Готово" style="-fx-padding: 5;">
-            <padding><Insets bottom="5" left="10" right="10" top="5"/></padding>
-        </Label>
-    </bottom>
 </BorderPane>

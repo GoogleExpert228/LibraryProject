@@ -1,8 +1,11 @@
 package org.example.library.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.library.enums.Role;
 import org.example.library.enums.UserStatus;
@@ -19,9 +22,14 @@ public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @NotBlank(message = "Username field can't be empty")
+    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
     private String username;
+    @NotBlank(message = "Password field can't be empty")
+    @Size(min = 8, message = "Password must be at least 8 symbols")
     private String password;
     private String fullName;
+    @Email(message = "Email should be valid")
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -91,5 +99,16 @@ public abstract class User {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("\"").append(fullName).append("\", ")
+                .append("\"").append(username).append("\", ")
+                .append("\"").append(email).append("\"")
+                .toString();
+
+
     }
 }
