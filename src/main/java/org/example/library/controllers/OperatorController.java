@@ -100,7 +100,7 @@ public class OperatorController {
         bookAvailColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().isAvailable()));
 
         // Borrows
-        borrowReaderColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getReader().getFullName()));
+        borrowReaderColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getReader().getUsername()));
         borrowBookColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getBook().getTitle()));
         borrowDueColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getDueDate()));
         borrowStatusColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getBorrowStatus()));

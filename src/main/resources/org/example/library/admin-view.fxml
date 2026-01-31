@@ -62,11 +62,12 @@
                         <Label text="Списък с всички потребители"/>
                         <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="userFullNameColumn" text="Име" prefWidth="200"/>
+                                <TableColumn fx:id="userFullNameColumn" text="Име" prefWidth="150"/>
                                 <TableColumn fx:id="userUsernameColumn" text="Потребителско име" prefWidth="150"/>
-                                <TableColumn fx:id="userEmailColumn" text="Имейл" prefWidth="150"/>
-                                <TableColumn fx:id="userRoleColumn" text="Роля" prefWidth="150"/>
-                                <TableColumn fx:id="userStatusColumn" text="Статус" prefWidth="150"/>
+                                <TableColumn fx:id="userEmailColumn" text="Имейл" prefWidth="100"/>
+                                <TableColumn fx:id="userRegistrationDateColumn" text="Дата на създаване" prefWidth="100"/>
+                                <TableColumn fx:id="userRoleColumn" text="Роля" prefWidth="120"/>
+                                <TableColumn fx:id="userStatusColumn" text="Статус" prefWidth="120"/>
                             </columns>
                         </TableView>
                     </VBox>

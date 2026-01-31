@@ -37,7 +37,7 @@
                         <columns>
                             <TableColumn fx:id="bookTitleCol" text="Заглавие" prefWidth="250"/>
                             <TableColumn fx:id="bookAuthorCol" text="Автор" prefWidth="150"/>
-                            <TableColumn fx:id="bookGenreCol" text="Жанр" prefWidth="120"/>
+                            <TableColumn fx:id="bookGenreCol" text="Жанр" prefWidth="150"/>
                             <TableColumn fx:id="bookConditionCol" text="Състояние" prefWidth="100"/>
                             <TableColumn fx:id="bookStatusCol" text="Статус" prefWidth="100"/>
                         </columns>

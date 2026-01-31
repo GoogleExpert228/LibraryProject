@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.example.library.enums.Role;
 import org.example.library.enums.UserStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -33,7 +34,7 @@ public abstract class User {
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
-    private LocalDateTime registrationDate;
+    private LocalDate registrationDate;
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
@@ -85,11 +86,11 @@ public abstract class User {
         this.role = role;
     }
 
-    public LocalDateTime getRegistrationDate() {
+    public LocalDate getRegistrationDate() {
         return registrationDate;
     }
 
-    public void setRegistrationDate(LocalDateTime registrationDate) {
+    public void setRegistrationDate(LocalDate registrationDate) {
         this.registrationDate = registrationDate;
     }
 

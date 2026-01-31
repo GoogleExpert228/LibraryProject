@@ -27,7 +27,7 @@ public class LibraryFacade {
             admin.setEmail("admin@library.bg");
             admin.setRole(Role.ADMIN);
             admin.setStatus(UserStatus.ACTIVE);
-            admin.setRegistrationDate(LocalDateTime.now());
+            admin.setRegistrationDate(LocalDate.now());
 
             userDao.save(admin);
             System.out.println(">>> Успешно създаден служебен администратор");
@@ -71,7 +71,7 @@ public class LibraryFacade {
         }
 
         userDao.findById(User.class, readerId)
-                .filter(user -> user.getRole() == Role.READER)
+                .filter(user -> user.getRole() == Role.READER || user.getRole() == Role.OPERATOR)
                 .ifPresent(userDao::delete);
     }
 
@@ -208,7 +208,7 @@ public class LibraryFacade {
         target.setEmail(email);
         target.setRole(role);
         target.setStatus(status);
-        target.setRegistrationDate(LocalDateTime.now());
+        target.setRegistrationDate(LocalDate.now());
     }
 
     private User requireUser(Long id) {

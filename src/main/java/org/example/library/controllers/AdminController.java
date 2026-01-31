@@ -17,12 +17,16 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.example.library.HelloApplication;
 import org.example.library.configs.UserSession;
-import org.example.library.entities.*;
+import org.example.library.entities.Book;
+import org.example.library.entities.Borrow;
+import org.example.library.entities.FormRequest;
+import org.example.library.entities.User;
 import org.example.library.enums.*;
 import org.example.library.services.LibraryFacade;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,59 +38,102 @@ public class AdminController {
     private FilteredList<User> filteredUsers;
 
     // --- ПОТРЕБИТЕЛИ (Админ часть) ---
-    @FXML private TextField operatorUsernameField;
-    @FXML private PasswordField operatorPasswordField;
-    @FXML private TextField operatorFullNameField;
-    @FXML private TextField operatorEmailField;
+    @FXML
+    private TextField operatorUsernameField;
+    @FXML
+    private PasswordField operatorPasswordField;
+    @FXML
+    private TextField operatorFullNameField;
+    @FXML
+    private TextField operatorEmailField;
 
-    @FXML private TableView<User> usersTable;
-    @FXML private TableColumn<User, String> userFullNameColumn;
-    @FXML private TableColumn<User, String> userUsernameColumn;
-    @FXML private TableColumn<User, Role> userRoleColumn;
-    @FXML private TableColumn<User, String> userEmailColumn;
-    @FXML private TableColumn<User, UserStatus> userStatusColumn;
+    @FXML
+    private TableView<User> usersTable;
+    @FXML
+    private TableColumn<User, String> userFullNameColumn;
+    @FXML
+    private TableColumn<User, String> userUsernameColumn;
+    @FXML
+    private TableColumn<User, Role> userRoleColumn;
+
+    @FXML
+    private TableColumn<User, LocalDate> userRegistrationDateColumn;
+    @FXML
+    private TableColumn<User, String> userEmailColumn;
+    @FXML
+    private TableColumn<User, UserStatus> userStatusColumn;
 
     // --- ЧИТАТЕЛИ (Операции) ---
-    @FXML private TextField readerUsernameField;
-    @FXML private PasswordField readerPasswordField;
-    @FXML private TextField readerFullNameField;
-    @FXML private TextField readerEmailField;
-    @FXML private ComboBox<User> readerActionCombo;
+    @FXML
+    private TextField readerUsernameField;
+    @FXML
+    private PasswordField readerPasswordField;
+    @FXML
+    private TextField readerFullNameField;
+    @FXML
+    private TextField readerEmailField;
+    @FXML
+    private ComboBox<User> readerActionCombo;
 
     // --- КНИГИ ---
-    @FXML private TextField bookInventoryField;
-    @FXML private TextField bookTitleField;
-    @FXML private TextField bookAuthorField;
-    @FXML private TextField bookGenreField;
-    @FXML private ComboBox<BookCondition> bookConditionCombo;
-    @FXML private TableView<Book> booksTable;
-    @FXML private TableColumn<Book, String> bookInvColumn;
-    @FXML private TableColumn<Book, String> bookTitleColumn;
-    @FXML private TableColumn<Book, BookCondition> bookConditionColumn;
-    @FXML private TableColumn<Book, Boolean> bookAvailColumn;
-
-    @FXML private ComboBox<Book> bookActionCombo;
-    @FXML private CheckBox showArchivedCheckBox;
+    @FXML
+    private TextField bookInventoryField;
+    @FXML
+    private TextField bookTitleField;
+    @FXML
+    private TextField bookAuthorField;
+    @FXML
+    private TextField bookGenreField;
+    @FXML
+    private ComboBox<BookCondition> bookConditionCombo;
+    @FXML
+    private TableView<Book> booksTable;
+    @FXML
+    private TableColumn<Book, String> bookInvColumn;
+    @FXML
+    private TableColumn<Book, String> bookTitleColumn;
+    @FXML
+    private TableColumn<Book, BookCondition> bookConditionColumn;
+    @FXML
+    private TableColumn<Book, Boolean> bookAvailColumn;
+    @FXML
+    private ComboBox<Book> bookActionCombo;
     // --- ЗАЕМАНЕ (Выдача) ---
-    @FXML private ComboBox<User> borrowReaderCombo;
-    @FXML private ComboBox<Book> borrowBookCombo;
-    @FXML private ComboBox<BorrowType> borrowTypeCombo;
-    @FXML private DatePicker borrowDueDatePicker;
-    @FXML private TableView<Borrow> borrowsTable;
-    @FXML private TableColumn<Borrow, String> borrowReaderColumn;
-    @FXML private TableColumn<Borrow, String> borrowBookColumn;
-    @FXML private TableColumn<Borrow, LocalDate> borrowDueColumn;
-    @FXML private TableColumn<Borrow, BorrowStatus> borrowStatusColumn;
+    @FXML
+    private ComboBox<User> borrowReaderCombo;
+    @FXML
+    private ComboBox<Book> borrowBookCombo;
+    @FXML
+    private ComboBox<BorrowType> borrowTypeCombo;
+    @FXML
+    private DatePicker borrowDueDatePicker;
+    @FXML
+    private TableView<Borrow> borrowsTable;
+    @FXML
+    private TableColumn<Borrow, String> borrowReaderColumn;
+    @FXML
+    private TableColumn<Borrow, String> borrowBookColumn;
+    @FXML
+    private TableColumn<Borrow, LocalDate> borrowDueColumn;
+    @FXML
+    private TableColumn<Borrow, BorrowStatus> borrowStatusColumn;
 
-    @FXML private ComboBox<Borrow> returnBorrowCombo;
+    @FXML
+    private ComboBox<Borrow> returnBorrowCombo;
 
     // --- ФОРМУЛЯРИ ---
-    @FXML private TableView<FormRequest> formsTable;
-    @FXML private TableColumn<FormRequest, LocalDate> formDateColumn;
-    @FXML private TableColumn<FormRequest, FormStatus> formStatusColumn;
-    @FXML private TableColumn<FormRequest, Book> formBookColumn;
-    @FXML private ComboBox<FormRequest> formActionCombo;
-    @FXML private ComboBox<FormStatus> formStatusCombo;
+    @FXML
+    private TableView<FormRequest> formsTable;
+    @FXML
+    private TableColumn<FormRequest, LocalDate> formDateColumn;
+    @FXML
+    private TableColumn<FormRequest, FormStatus> formStatusColumn;
+    @FXML
+    private TableColumn<FormRequest, Book> formBookColumn;
+    @FXML
+    private ComboBox<FormRequest> formActionCombo;
+    @FXML
+    private ComboBox<FormStatus> formStatusCombo;
 
     @FXML
     public void initialize() {
@@ -100,6 +147,7 @@ public class AdminController {
         userFullNameColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFullName()));
         userUsernameColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUsername()));
         userEmailColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
+        userRegistrationDateColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getRegistrationDate()));
         userRoleColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getRole()));
         userStatusColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getStatus()));
 
@@ -110,7 +158,7 @@ public class AdminController {
         bookAvailColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().isAvailable()));
 
         // Borrows
-        borrowReaderColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getReader().getFullName()));
+        borrowReaderColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getReader().getUsername()));
         borrowBookColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getBook().getTitle()));
         borrowDueColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getDueDate()));
         borrowStatusColumn.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getBorrowStatus()));
@@ -155,13 +203,11 @@ public class AdminController {
 
         filteredUsers = new FilteredList<>(masterData, user -> true);
 
-        updateFilter();
-
         SortedList<User> sortedData = new SortedList<>(filteredUsers);
         sortedData.comparatorProperty().bind(usersTable.comparatorProperty());
 
         usersTable.setItems(sortedData);
-        usersTable.setItems(FXCollections.observableArrayList(users));
+        readerActionCombo.setItems(sortedData);
 
         List<User> readers = facade.loadReaders();
         borrowReaderCombo.setItems(FXCollections.observableArrayList(readers));
@@ -183,16 +229,6 @@ public class AdminController {
         formActionCombo.setItems(FXCollections.observableArrayList(facade.loadAllForms()));
     }
 
-    private void updateFilter() {
-        filteredUsers.setPredicate(user -> {
-            if (showArchivedCheckBox != null && showArchivedCheckBox.isSelected()) {
-                return true;
-            }
-
-            return user.getStatus() != UserStatus.ARCHIVED;
-        });
-    }
-
     // --- ACTIONS ---
 
     @FXML
@@ -202,7 +238,9 @@ public class AdminController {
                     operatorFullNameField.getText(), operatorEmailField.getText());
             refreshAllData();
             showStatus("Операторът е създаден успешно.");
-        } catch (Exception e) { showError(e); }
+        } catch (Exception e) {
+            showError(e);
+        }
     }
 
     @FXML
@@ -212,7 +250,9 @@ public class AdminController {
                     readerFullNameField.getText(), readerEmailField.getText());
             refreshAllData();
             showStatus("Читателят е регистриран.");
-        } catch (Exception e) { showError(e); }
+        } catch (Exception e) {
+            showError(e);
+        }
     }
 
     @FXML
@@ -231,7 +271,9 @@ public class AdminController {
                     bookAuthorField.getText(), bookGenreField.getText(), bookConditionCombo.getValue());
             refreshAllData();
             showStatus("Книгата е добавена.");
-        } catch (Exception e) { showError(e); }
+        } catch (Exception e) {
+            showError(e);
+        }
     }
 
     @FXML
@@ -266,7 +308,8 @@ public class AdminController {
         dialog.getDialogPane().getButtonTypes().addAll(approveButtonType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
-        grid.setHgap(10); grid.setVgap(10);
+        grid.setHgap(10);
+        grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
         ComboBox<BorrowType> typeCombo = new ComboBox<>(FXCollections.observableArrayList(BorrowType.values()));
@@ -277,9 +320,7 @@ public class AdminController {
         // ЛОГИКА АВТОМАТИЧЕСКОЙ СМЕНЫ ДАТЫ
         typeCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == BorrowType.READING_ROOM) {
-                datePicker.setValue(LocalDate.now()); // Возврат сегодня
-            } else {
-                datePicker.setValue(LocalDate.now().plusDays(14)); // Стандартные 14 дней
+                datePicker.setValue(LocalDate.now());
             }
         });
 
@@ -310,7 +351,9 @@ public class AdminController {
                     borrowTypeCombo.getValue(), borrowDueDatePicker.getValue());
             refreshAllData();
             showStatus("Книгата е отдадена.");
-        } catch (Exception e) { showError(e); }
+        } catch (Exception e) {
+            showError(e);
+        }
     }
 
     @FXML
@@ -370,10 +413,12 @@ public class AdminController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, msg);
         alert.show();
     }
+
     private void showError(Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage());
         alert.show();
     }
+
     private void showAlert(String msg) {
         Alert alert = new Alert(Alert.AlertType.WARNING, msg);
         alert.show();
