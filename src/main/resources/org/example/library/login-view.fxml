@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.library.controllers.LoginController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label text="Вход в системата">
+        <font>
+            <Font name="System Bold" size="24.0" />
+        </font>
+    </Label>
+
+    <VBox maxWidth="300.0" spacing="10.0">
+        <Label text="Потребителско име" />
+        <TextField fx:id="usernameField" promptText="username" />
+
+        <Label text="Парола" />
+        <PasswordField fx:id="passwordField" promptText="password" />
+
+        <Label fx:id="errorLabel" textFill="RED" wrapText="true" />
+
+        <Button defaultButton="true" maxWidth="Infinity" onAction="#onLoginButtonClick" text="Вход" style="-fx-background-color: #2a9df4; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </VBox>
+</VBox>

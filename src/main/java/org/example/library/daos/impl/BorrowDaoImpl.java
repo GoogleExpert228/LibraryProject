@@ -1,6 +1,6 @@
 package org.example.library.daos.impl;
 
-import org.example.library.daos.BorrowDao;
+import org.example.library.contracts.daos.BorrowDao;
 import org.example.library.entities.Borrow;
 import org.example.library.enums.BorrowStatus;
 import org.hibernate.Session;

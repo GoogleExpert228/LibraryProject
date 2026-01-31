@@ -13,9 +13,12 @@ module org.example.library {
     requires org.hibernate.orm.core;
     requires static lombok;
     requires jakarta.persistence;
+    requires java.naming;
 
     opens org.example.library to javafx.fxml;
     exports org.example.library;
     exports org.example.library.controllers;
+    exports org.example.library.services;
     opens org.example.library.controllers to javafx.fxml;
+    opens org.example.library.entities to org.hibernate.orm.core;
 }

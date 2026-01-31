@@ -1,6 +1,6 @@
 package org.example.library.daos.impl;
 
-import org.example.library.daos.BookDao;
+import org.example.library.contracts.daos.BookDao;
 import org.example.library.entities.Book;
 import org.hibernate.Session;
 

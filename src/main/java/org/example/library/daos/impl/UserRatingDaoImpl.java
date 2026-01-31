@@ -1,6 +1,6 @@
 package org.example.library.daos.impl;
 
-import org.example.library.daos.UserRatingDao;
+import org.example.library.contracts.daos.UserRatingDao;
 import org.example.library.entities.UserRating;
 import org.hibernate.Session;
 

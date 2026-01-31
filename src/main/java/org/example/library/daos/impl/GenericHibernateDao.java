@@ -1,7 +1,7 @@
 package org.example.library.daos.impl;
 
 import org.example.library.configs.HibernateUtil;
-import org.example.library.daos.GenericDao;
+import org.example.library.contracts.daos.GenericDao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

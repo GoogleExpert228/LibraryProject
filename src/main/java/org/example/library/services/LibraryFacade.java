@@ -1,6 +1,6 @@
 package org.example.library.services;
 
-import org.example.library.daos.*;
+import org.example.library.contracts.daos.*;
 import org.example.library.daos.impl.*;
 import org.example.library.entities.*;
 import org.example.library.enums.*;
@@ -10,6 +10,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Facade that orchestrates the core library use-cases expected by the GUI.
+ * Keeps the JavaFX layer decoupled from the Hibernate DAOs while reusing the
+ * existing persistence logic.
+ */
 public class LibraryFacade {
 
     private final UserDao userDao = new UserDaoImpl();

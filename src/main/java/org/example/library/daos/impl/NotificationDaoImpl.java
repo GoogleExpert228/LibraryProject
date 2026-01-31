@@ -1,6 +1,6 @@
 package org.example.library.daos.impl;
 
-import org.example.library.daos.NotificationDao;
+import org.example.library.contracts.daos.NotificationDao;
 import org.example.library.entities.Notification;
 import org.example.library.enums.NotificationType;
 import org.hibernate.Session;

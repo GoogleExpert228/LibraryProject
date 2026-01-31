@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.library.controllers.AdminController">
+
+    <fx:define>
+        <Insets fx:id="DEFAULT_PADDING" top="10" right="10" bottom="10" left="10"/>
+    </fx:define>
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
+            <Label text="АДМИНИСТРАТОРСКИ ПАНЕЛ" textFill="WHITE">
+                <font><Font name="System Bold" size="20.0" /></font>
+            </Label>
+            <Label fx:id="welcomeLabel" textFill="#bdc3c7" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#onLogout" text="Изход" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+        </HBox>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+
+            <Tab text="Потребители">
+                <SplitPane dividerPositions="0.3">
+                    <ScrollPane fitToWidth="true">
+                        <VBox spacing="15.0" padding="$DEFAULT_PADDING">
+                            <Label text="Създаване на Оператор" style="-fx-font-weight: bold;"/>
+                            <GridPane hgap="10" vgap="10">
+                                <TextField fx:id="operatorUsernameField" promptText="Потр. име" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                <PasswordField fx:id="operatorPasswordField" promptText="Парола" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                <TextField fx:id="operatorFullNameField" promptText="Име" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                <TextField fx:id="operatorEmailField" promptText="Email" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            </GridPane>
+                            <Button text="Създай Оператор" onAction="#onCreateOperator" maxWidth="Infinity" style="-fx-base: #27ae60;"/>
+
+                            <Separator/>
+
+                            <Label text="Регистрация на Читател" style="-fx-font-weight: bold;"/>
+                            <GridPane hgap="10" vgap="10">
+                                <TextField fx:id="readerUsernameField" promptText="Потр. име" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                <PasswordField fx:id="readerPasswordField" promptText="Парола" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                <TextField fx:id="readerFullNameField" promptText="Име" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                <TextField fx:id="readerEmailField" promptText="Email" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            </GridPane>
+                            <Button text="Регистрирай Читател" onAction="#onRegisterReader" maxWidth="Infinity"/>
+
+                            <Separator/>
+                            <Label text="Управление на Читатели" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="readerActionCombo" promptText="Избери читател" maxWidth="Infinity"/>
+                            <Button text="Блокирай Читател" onAction="#onBlockReader" maxWidth="Infinity" style="-fx-text-fill: red;"/>
+                        </VBox>
+                    </ScrollPane>
+
+                    <VBox padding="$DEFAULT_PADDING" spacing="10">
+                        <Label text="Списък с всички потребители"/>
+                        <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="userNameColumn" text="Име" prefWidth="200"/>
+                                <TableColumn fx:id="userRoleColumn" text="Роля" prefWidth="150"/>
+                                <TableColumn fx:id="userStatusColumn" text="Статус" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </SplitPane>
+            </Tab>
+
+            <Tab text="Книги">
+                <SplitPane dividerPositions="0.3">
+                    <VBox spacing="15.0" padding="$DEFAULT_PADDING">
+                        <Label text="Добавяне на книга" style="-fx-font-weight: bold;"/>
+                        <TextField fx:id="bookInventoryField" promptText="Инвентарен номер"/>
+                        <TextField fx:id="bookTitleField" promptText="Заглавие"/>
+                        <TextField fx:id="bookAuthorField" promptText="Автор"/>
+                        <TextField fx:id="bookGenreField" promptText="Жанр"/>
+                        <ComboBox fx:id="bookConditionCombo" promptText="Състояние" maxWidth="Infinity"/>
+                        <Button text="Добави Книга" onAction="#onAddBook" maxWidth="Infinity"/>
+
+                        <Separator/>
+                        <Label text="Редакция" style="-fx-font-weight: bold;"/>
+                        <ComboBox fx:id="bookActionCombo" promptText="Избери книга" maxWidth="Infinity"/>
+                        <Button text="Архивирай Книга" onAction="#onArchiveBook" maxWidth="Infinity"/>
+                    </VBox>
+
+                    <TableView fx:id="booksTable">
+                        <columns>
+                            <TableColumn fx:id="bookInvColumn" text="Инв. №" prefWidth="100"/>
+                            <TableColumn fx:id="bookTitleColumn" text="Заглавие" prefWidth="300"/>
+                            <TableColumn fx:id="bookConditionColumn" text="Състояние" prefWidth="150"/>
+                            <TableColumn fx:id="bookAvailColumn" text="Наличност" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </SplitPane>
+            </Tab>
+
+            <Tab text="Заемане">
+                <SplitPane dividerPositions="0.3">
+                    <VBox spacing="15.0" padding="$DEFAULT_PADDING">
+                        <Label text="Отдаване на книга" style="-fx-font-weight: bold;"/>
+                        <ComboBox fx:id="borrowReaderCombo" promptText="Читател" maxWidth="Infinity"/>
+                        <ComboBox fx:id="borrowBookCombo" promptText="Книга" maxWidth="Infinity"/>
+                        <ComboBox fx:id="borrowTypeCombo" promptText="Тип" maxWidth="Infinity"/>
+                        <DatePicker fx:id="borrowDueDatePicker" promptText="Краен срок" maxWidth="Infinity"/>
+                        <Button text="Отдай" onAction="#onBorrowBook" maxWidth="Infinity" style="-fx-base: #3498db;"/>
+
+                        <Separator/>
+                        <Label text="Връщане" style="-fx-font-weight: bold;"/>
+                        <ComboBox fx:id="returnBorrowCombo" promptText="Активен заем" maxWidth="Infinity"/>
+                        <Button text="Маркирай като върната" onAction="#onReturnBook" maxWidth="Infinity"/>
+                    </VBox>
+
+                    <TableView fx:id="borrowsTable">
+                        <columns>
+                            <TableColumn fx:id="borrowReaderColumn" text="Читател" prefWidth="200"/>
+                            <TableColumn fx:id="borrowBookColumn" text="Книга" prefWidth="250"/>
+                            <TableColumn fx:id="borrowDueColumn" text="Срок" prefWidth="120"/>
+                            <TableColumn fx:id="borrowStatusColumn" text="Статус" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                </SplitPane>
+            </Tab>
+
+            <Tab text="Формуляри">
+                <SplitPane dividerPositions="0.3">
+                    <VBox spacing="15.0" padding="$DEFAULT_PADDING">
+                        <Label text="Обработка" style="-fx-font-weight: bold;"/>
+                        <ComboBox fx:id="formActionCombo" promptText="Избери заявка" maxWidth="Infinity"/>
+                        <ComboBox fx:id="formStatusCombo" promptText="Нов статус" maxWidth="Infinity"/>
+                        <Button text="Обнови статус" onAction="#onUpdateForm" maxWidth="Infinity"/>
+                    </VBox>
+                    <TableView fx:id="formsTable">
+                        <columns>
+                            <TableColumn fx:id="formDateColumn" text="Дата" prefWidth="120"/>
+                            <TableColumn fx:id="formContentColumn" text="Съдържание" prefWidth="300"/>
+                            <TableColumn fx:id="formStatusColumn" text="Статус" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+                </SplitPane>
+            </Tab>
+
+            <Tab text="Известия">
+                <SplitPane dividerPositions="0.3">
+                    <VBox spacing="15.0" padding="$DEFAULT_PADDING">
+                        <Label text="Изпращане" style="-fx-font-weight: bold;"/>
+                        <ComboBox fx:id="notifTypeCombo" promptText="Тип" maxWidth="Infinity"/>
+                        <ComboBox fx:id="notifRecipientCombo" promptText="Получател (опция)" maxWidth="Infinity"/>
+                        <TextArea fx:id="notifMsgArea" promptText="Съобщение..." prefRowCount="4"/>
+                        <Button text="Изпрати" onAction="#onSendNotification" maxWidth="Infinity"/>
+                    </VBox>
+                    <TableView fx:id="notifTable">
+                        <columns>
+                            <TableColumn fx:id="notifDateCol" text="Дата" prefWidth="120"/>
+                            <TableColumn fx:id="notifMsgCol" text="Съобщение" prefWidth="400"/>
+                        </columns>
+                    </TableView>
+                </SplitPane>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+    <bottom>
+        <Label fx:id="statusLabel" text="Готово" style="-fx-padding: 5;">
+            <padding><Insets bottom="5" left="10" right="10" top="5"/></padding>
+        </Label>
+    </bottom>
+</BorderPane>
