@@ -1,4 +1,4 @@
-package org.example.library.daos;
+package org.example.library.contracts.daos;
 
 import java.util.List;
 import java.util.Optional;

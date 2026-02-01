@@ -15,6 +15,8 @@ module org.example.library {
     requires jakarta.persistence;
     requires java.naming;
     requires jakarta.validation;
+    requires jbcrypt;
+    requires org.slf4j;
 
     opens org.example.library to javafx.fxml;
     exports org.example.library;

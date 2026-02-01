@@ -22,7 +22,7 @@ import org.example.library.entities.Borrow;
 import org.example.library.entities.FormRequest;
 import org.example.library.entities.User;
 import org.example.library.enums.*;
-import org.example.library.services.LibraryFacade;
+import org.example.library.services.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -198,7 +198,7 @@ public class AdminController {
     private void refreshAllData() {
         this.currentUser = UserSession.getInstance().getUser();
 
-        List<User> users = facade.loadAllUsers();
+        List<User> users = ServiceFactory.service(UserService.class).loadAllUsers();
         ObservableList<User> masterData = FXCollections.observableArrayList(users);
 
         filteredUsers = new FilteredList<>(masterData, user -> true);
@@ -209,24 +209,24 @@ public class AdminController {
         usersTable.setItems(sortedData);
         readerActionCombo.setItems(sortedData);
 
-        List<User> readers = facade.loadReaders();
+        List<User> readers = ServiceFactory.service(UserService.class).loadReaders();
         borrowReaderCombo.setItems(FXCollections.observableArrayList(readers));
 
         // Books
-        List<Book> books = facade.loadAllBooks();
+        List<Book> books = ServiceFactory.service(BookService.class).loadAllBooks();
         booksTable.setItems(FXCollections.observableArrayList(books));
         bookActionCombo.setItems(FXCollections.observableArrayList(books));
-        borrowBookCombo.setItems(FXCollections.observableArrayList(facade.loadAvailableBooks()));
+        borrowBookCombo.setItems(FXCollections.observableArrayList(ServiceFactory.service(BookService.class).loadAvailableBooks()));
 
         // Borrows
-        List<Borrow> borrows = facade.loadAllBorrows();
+        List<Borrow> borrows = ServiceFactory.service(BorrowService.class).loadAllBorrows();
         borrowsTable.setItems(FXCollections.observableArrayList(borrows));
         returnBorrowCombo.setItems(FXCollections.observableArrayList(
                 borrows.stream().filter(b -> b.getBorrowStatus() == BorrowStatus.ACTIVE).collect(Collectors.toList())
         ));
 
-        formsTable.setItems(FXCollections.observableArrayList(facade.loadAllForms()));
-        formActionCombo.setItems(FXCollections.observableArrayList(facade.loadAllForms()));
+        formsTable.setItems(FXCollections.observableArrayList(ServiceFactory.service(FormRequestService.class).loadAll()));
+        formActionCombo.setItems(FXCollections.observableArrayList(ServiceFactory.service(FormRequestService.class).loadAll()));
     }
 
     // --- ACTIONS ---
@@ -234,7 +234,7 @@ public class AdminController {
     @FXML
     private void onCreateOperator() {
         try {
-            facade.createOperator(operatorUsernameField.getText(), operatorPasswordField.getText(),
+            ServiceFactory.service(UserService.class).createOperator(operatorUsernameField.getText(), operatorPasswordField.getText(),
                     operatorFullNameField.getText(), operatorEmailField.getText());
             refreshAllData();
             showStatus("Операторът е създаден успешно.");
@@ -246,7 +246,7 @@ public class AdminController {
     @FXML
     private void onRegisterReader() {
         try {
-            facade.registerReader(readerUsernameField.getText(), readerPasswordField.getText(),
+            ServiceFactory.service(UserService.class).registerReader(readerUsernameField.getText(), readerPasswordField.getText(),
                     readerFullNameField.getText(), readerEmailField.getText());
             refreshAllData();
             showStatus("Читателят е регистриран.");
@@ -258,7 +258,7 @@ public class AdminController {
     @FXML
     private void onRemoveUser() {
         if (readerActionCombo.getValue() != null) {
-            facade.removeReader(readerActionCombo.getValue().getId());
+             ServiceFactory.service(UserService.class).removeReader(readerActionCombo.getValue().getId());
             refreshAllData();
             showStatus("Читателят е изтрит от системата.");
         }
@@ -267,7 +267,7 @@ public class AdminController {
     @FXML
     private void onAddBook() {
         try {
-            facade.addBook(bookInventoryField.getText(), bookTitleField.getText(),
+           ServiceFactory.service(BookService.class).addBook(bookInventoryField.getText(), bookTitleField.getText(),
                     bookAuthorField.getText(), bookGenreField.getText(), bookConditionCombo.getValue());
             refreshAllData();
             showStatus("Книгата е добавена.");
@@ -279,7 +279,7 @@ public class AdminController {
     @FXML
     private void onArchiveBook() {
         if (bookActionCombo.getValue() != null) {
-            facade.archiveBook(bookActionCombo.getValue().getId());
+            ServiceFactory.service(BookService.class).archiveBook(bookActionCombo.getValue().getId());
             refreshAllData();
             showStatus("Книгата е архивирана.");
         }
@@ -334,7 +334,7 @@ public class AdminController {
         dialog.showAndWait().ifPresent(response -> {
             if (response == approveButtonType) {
                 try {
-                    facade.approveRequestAndBorrow(selected.getId(), typeCombo.getValue(), datePicker.getValue());
+                    ServiceFactory.service(FormRequestService.class).approveRequestAndBorrow(selected.getId(), typeCombo.getValue(), datePicker.getValue());
                     refreshAllData();
                     showStatus("Заявката е одобрена успешно.");
                 } catch (Exception e) {
@@ -347,8 +347,7 @@ public class AdminController {
     @FXML
     private void onBorrowBook() {
         try {
-            facade.borrowBook(borrowReaderCombo.getValue().getId(), borrowBookCombo.getValue().getId(),
-                    borrowTypeCombo.getValue(), borrowDueDatePicker.getValue());
+            ServiceFactory.service(BorrowService.class).borrowBook(borrowReaderCombo.getValue().getId(), borrowBookCombo.getValue().getId(), borrowTypeCombo.getValue(), borrowDueDatePicker.getValue());
             refreshAllData();
             showStatus("Книгата е отдадена.");
         } catch (Exception e) {
@@ -379,7 +378,7 @@ public class AdminController {
         Optional<BookCondition> result = dialog.showAndWait();
         result.ifPresent(condition -> {
             try {
-                facade.returnBook(selectedBorrow.getId(), condition);
+                ServiceFactory.service(BorrowService.class).returnBook(selectedBorrow.getId(), condition);
                 refreshAllData();
                 showStatus("Книгата е върната успешно със статус: " + condition);
             } catch (Exception e) {
@@ -391,7 +390,7 @@ public class AdminController {
     @FXML
     private void onUpdateForm() {
         if (formActionCombo.getValue() != null && formStatusCombo.getValue() != null) {
-            facade.updateFormStatus(formActionCombo.getValue().getId(), formStatusCombo.getValue());
+            ServiceFactory.service(FormRequestService.class).updateStatus(formActionCombo.getValue().getId(), formStatusCombo.getValue());
             refreshAllData();
             showStatus("Статусът на формуляра е обновен.");
         }

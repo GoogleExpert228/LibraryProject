@@ -19,7 +19,7 @@ import org.example.library.entities.Borrow;
 import org.example.library.entities.FormRequest;
 import org.example.library.entities.User;
 import org.example.library.enums.*;
-import org.example.library.services.LibraryFacade;
+import org.example.library.services.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -140,24 +140,24 @@ public class OperatorController {
     private void refreshAllData() {
         this.currentUser = UserSession.getInstance().getUser();
         // Readers
-        List<User> readers = facade.loadReaders();
+        List<User> readers = ServiceFactory.service(UserService.class).loadReaders();
         readersTable.setItems(FXCollections.observableArrayList(readers));
         readerActionCombo.setItems(FXCollections.observableArrayList(readers));
         borrowReaderCombo.setItems(FXCollections.observableArrayList(readers));
 
         // Books
-        List<Book> books = facade.loadAllBooks();
+        List<Book> books = ServiceFactory.service(BookService.class).loadAllBooks();
         booksTable.setItems(FXCollections.observableArrayList(books));
         bookActionCombo.setItems(FXCollections.observableArrayList(books));
-        borrowBookCombo.setItems(FXCollections.observableArrayList(facade.loadAvailableBooks()));
+        borrowBookCombo.setItems(FXCollections.observableArrayList(ServiceFactory.service(BookService.class).loadAvailableBooks()));
 
         // Borrows
-        List<Borrow> borrows = facade.loadAllBorrows();
+        List<Borrow> borrows = ServiceFactory.service(BorrowService.class).loadAllBorrows();
         borrowsTable.setItems(FXCollections.observableArrayList(borrows));
 
         // Forms
-        formsTable.setItems(FXCollections.observableArrayList(facade.loadAllForms()));
-        formActionCombo.setItems(FXCollections.observableArrayList(facade.loadAllForms()));
+        formsTable.setItems(FXCollections.observableArrayList(ServiceFactory.service(FormRequestService.class).loadAll()));
+        formActionCombo.setItems(FXCollections.observableArrayList(ServiceFactory.service(FormRequestService.class).loadAll()));
     }
 
     // --- ACTIONS ---
@@ -169,7 +169,7 @@ public class OperatorController {
             return;
         }
         try {
-            facade.registerReader(readerUsernameField.getText(), readerPasswordField.getText(),
+            ServiceFactory.service(UserService.class).registerReader(readerUsernameField.getText(), readerPasswordField.getText(),
                     readerFullNameField.getText(), readerEmailField.getText());
             refreshAllData();
             showStatus("Читателят е регистриран успешно.");
@@ -180,7 +180,7 @@ public class OperatorController {
     @FXML
     private void onRemoveReader() {
         if (readerActionCombo.getValue() != null) {
-            facade.removeReader(readerActionCombo.getValue().getId());
+            ServiceFactory.service(UserService.class).removeReader(readerActionCombo.getValue().getId());
             refreshAllData();
             showStatus("Потребител е изтрит от системата.");
         }
@@ -189,7 +189,7 @@ public class OperatorController {
     @FXML
     private void onAddBook() {
         try {
-            facade.addBook(bookInventoryField.getText(), bookTitleField.getText(),
+            ServiceFactory.service(BookService.class).addBook(bookInventoryField.getText(), bookTitleField.getText(),
                     bookAuthorField.getText(), bookGenreField.getText(), bookConditionCombo.getValue());
             refreshAllData();
             showStatus("Книгата е добавена.");
@@ -199,7 +199,7 @@ public class OperatorController {
     @FXML
     private void onArchiveBook() {
         if (bookActionCombo.getValue() != null) {
-            facade.archiveBook(bookActionCombo.getValue().getId());
+            ServiceFactory.service(BookService.class).archiveBook(bookActionCombo.getValue().getId());
             refreshAllData();
             showStatus("Книгата е архивирана.");
         }
@@ -222,7 +222,7 @@ public class OperatorController {
 
         dialog.showAndWait().ifPresent(condition -> {
             try {
-                facade.finalizeReturn(selected.getId(), condition);
+                ServiceFactory.service(BorrowService.class).finalizeReturn(selected.getId(), condition);
                 refreshAllData();
                 showStatus("Книгата е приета обратно със статус " + condition);
             } catch (Exception e) {
@@ -281,7 +281,7 @@ public class OperatorController {
         dialog.showAndWait().ifPresent(response -> {
             if (response == approveButtonType) {
                 try {
-                    facade.approveRequestAndBorrow(selected.getId(), typeCombo.getValue(), datePicker.getValue());
+                    ServiceFactory.service(FormRequestService.class).approveRequestAndBorrow(selected.getId(), typeCombo.getValue(), datePicker.getValue());
                     refreshAllData();
                     showStatus("Заявката е одобрена успешно.");
                 } catch (Exception e) {
@@ -294,7 +294,7 @@ public class OperatorController {
     @FXML
     private void onBorrowBook() {
         try {
-            facade.borrowBook(borrowReaderCombo.getValue().getId(), borrowBookCombo.getValue().getId(),
+            ServiceFactory.service(BorrowService.class).borrowBook(borrowReaderCombo.getValue().getId(), borrowBookCombo.getValue().getId(),
                     borrowTypeCombo.getValue(), borrowDueDatePicker.getValue());
             refreshAllData();
             showStatus("Книгата е отдадена.");
@@ -304,7 +304,7 @@ public class OperatorController {
     @FXML
     private void onUpdateForm() {
         if (formActionCombo.getValue() != null && formStatusCombo.getValue() != null) {
-            facade.updateFormStatus(formActionCombo.getValue().getId(), formStatusCombo.getValue());
+            ServiceFactory.service(FormRequestService.class).updateStatus(formActionCombo.getValue().getId(), formStatusCombo.getValue());
             refreshAllData();
             showStatus("Статусът е обновен.");
         }

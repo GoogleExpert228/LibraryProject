@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.library.services.LibraryFacade;
+import org.example.library.services.ServiceFactory;
+import org.example.library.services.UserService;
 
 import java.io.IOException;
 
@@ -12,7 +14,7 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         LibraryFacade facade = new LibraryFacade();
-        facade.createInitialAdmin();
+        ServiceFactory.service(UserService.class).createInitialAdmin();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 400, 300);
         stage.setTitle("Библиотека - Вход");

@@ -3,7 +3,7 @@ package org.example.library.daos.impl;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import org.example.library.daos.UserDao;
+import org.example.library.contracts.daos.UserDao;
 import org.example.library.entities.User;
 import org.example.library.enums.Role;
 import org.example.library.enums.UserStatus;

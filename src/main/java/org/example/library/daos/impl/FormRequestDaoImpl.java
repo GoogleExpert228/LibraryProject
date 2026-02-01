@@ -1,6 +1,6 @@
 package org.example.library.daos.impl;
 
-import org.example.library.daos.FormRequestDao;
+import org.example.library.contracts.daos.FormRequestDao;
 import org.example.library.entities.FormRequest;
 import org.example.library.entities.User;
 import org.example.library.enums.FormStatus;

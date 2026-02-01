@@ -15,7 +15,7 @@ import org.example.library.configs.UserSession;
 import org.example.library.entities.*;
 import org.example.library.enums.BorrowStatus;
 import org.example.library.enums.FormStatus;
-import org.example.library.services.LibraryFacade;
+import org.example.library.services.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -80,24 +80,24 @@ public class ReaderController {
     private void refreshData() {
         this.currentUser = UserSession.getInstance().getUser();
         // 1. Каталог (все книги)
-        booksTable.setItems(FXCollections.observableArrayList(facade.loadAllBooks()));
+        booksTable.setItems(FXCollections.observableArrayList( ServiceFactory.service(BookService.class).loadAllBooks()));
 
         // 2. Заеми (фильтр по текущему пользователю)
-        List<Borrow> myBorrows = facade.loadAllBorrows().stream()
+        List<Borrow> myBorrows =  ServiceFactory.service(BorrowService.class).loadAllBorrows().stream()
                 .filter(b -> b.getReader().getId().equals(currentUser.getId()))
                 .sorted(Comparator.comparing(Borrow::getBorrowDate).reversed())
                 .collect(Collectors.toList());
         myBorrowsTable.setItems(FXCollections.observableArrayList(myBorrows));
 
         // 3. Заявки (фильтр по текущему пользователю)
-        List<FormRequest> myRequests = facade.loadAllForms().stream()
+        List<FormRequest> myRequests =  ServiceFactory.service(FormRequestService.class).loadAll().stream()
                 .filter(f -> f.getSubmittedBy().getId().equals(currentUser.getId()))
                 .sorted(Comparator.comparing(FormRequest::getSubmitDate).reversed())
                 .collect(Collectors.toList());
         myRequestsTable.setItems(FXCollections.observableArrayList(myRequests));
 
         if (requestBookCombo != null) {
-            requestBookCombo.setItems(FXCollections.observableArrayList(facade.loadAvailableBooks()));
+            requestBookCombo.setItems(FXCollections.observableArrayList(ServiceFactory.service(BookService.class).loadAvailableBooks()));
             requestBookCombo.getSelectionModel().clearSelection();
         }
     }
@@ -108,7 +108,7 @@ public class ReaderController {
 
         try {
             // null для createdByOperatorId, так как создал сам читатель
-            facade.submitReaderForm(currentUser.getId(), selectedBook);
+            ServiceFactory.service(FormRequestService.class).submitReaderForm(currentUser.getId(), selectedBook);
             refreshData();
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Вашата заявка е изпратена успешно.");
             alert.show();
@@ -133,7 +133,7 @@ public class ReaderController {
 
         try {
             // Вызываем новый метод фасада для создания запроса на возврат
-            facade.requestReturn(selected.getId());
+            ServiceFactory.service(BorrowService.class).requestReturn(selected.getId());
             refreshData();
             showStatus("Заявката за връщане е изпратена успешно. Моля, предайте книгата на оператор.");
         } catch (Exception e) {

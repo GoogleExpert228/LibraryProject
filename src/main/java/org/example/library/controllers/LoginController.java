@@ -17,6 +17,8 @@ import org.example.library.entities.Reader;
 import org.example.library.entities.User;
 import org.example.library.services.LibraryFacade;
 import org.example.library.services.LoginService;
+import org.example.library.services.ServiceFactory;
+import org.example.library.services.UserService;
 
 import java.io.IOException;
 import java.util.Set;
@@ -48,7 +50,7 @@ public class LoginController {
         Stage stage = (Stage) ((Node) event.getSource())
                 .getScene().getWindow();
 
-        String error = loginService.login(
+        String error = ServiceFactory.service(LoginService.class).login(
                 usernameField.getText(),
                 passwordField.getText(),
                 stage
@@ -110,7 +112,7 @@ public class LoginController {
                 }
             }
         } else {
-            facade.registerReader(usernameField.getText(), passwordField.getText(), fullNameField.getText(), emailField.getText());
+            ServiceFactory.service(UserService.class).registerReader(usernameField.getText(), passwordField.getText(), fullNameField.getText(), emailField.getText());
             System.out.println("Читател " + usernameField.getText() + " успешно създан!");
             handleCancelRegister(event);
         }
